@@ -1,6 +1,10 @@
+html {
+  background-color: black;
+}
+
 body {
   font-family: fantasy, arial;
-  color: red;
+  color: rgb(53, 209, 105);;
 }
 
 .main-title {
@@ -8,7 +12,7 @@ body {
 }
 
 .movie-list {
-  margin-top: 125px;
+  margin-top:25px;
 }
 
 .movie-entry {
