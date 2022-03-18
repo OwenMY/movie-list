@@ -11,8 +11,15 @@ body {
   border-bottom: 1px solid;
 }
 
+.search {
+  /* float: left; */
+  margin-bottom: 1px;
+}
+
 .movie-list {
-  margin-top:25px;
+  /* width: 40%; */
+  /* margin-top: 20px; */
+  /* border: 2px solid rgb(29, 150, 29) */
 }
 
 .movie-entry {
@@ -24,7 +31,31 @@ body {
 .movie-title {
   text-align: center;
 }
-/* span {
-  padding-top: 100px
-  border 0
-} */
+
+.react-tabs__tab-list {
+  width: 20%;
+}
+
+.watched {
+  float: right;
+}
+
+.watched-list {
+  float: left;
+  /* width: 20%; */
+  padding-right: 5px;
+}
+
+.to-watch-list {
+  float: left;
+  /* width: 25%; */
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+ul {
+  /* display: inline-block; */
+  list-style-type: none;
+  padding-bottom: 10px;
+  padding-inline-start: 10px;
+}

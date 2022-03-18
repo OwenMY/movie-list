@@ -1,13 +1,31 @@
 import React from 'react';
 
-const AddMovieBar = ({addMovie}) => {
-  console.log(addMovie)
-  return (
-    <div>
-      <input className="add-movie" placeholder="Add movie data here" type="text" />
-      <button onClick={(e) => addMovie(e)} type="button" text="add-movie">Add</button>
-    </div>
-  );
+class AddMovieBar extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  };
+
+  handleChange (event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit (event) {
+    event.preventDefault();
+    this.props.app.handleAddMovie(this.state.value)
+  }
+
+  render() {
+    return (
+    <form onSubmit={this.handleSubmit}>
+      <input className="add-movie" value={this.state.value} onChange={this.handleChange} placeholder="Add movie data here" type="text" />
+      <input type="submit" value="Add"/>
+    </form>
+    );
+  }
 };
 
 export default AddMovieBar;

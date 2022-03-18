@@ -1,10 +1,11 @@
 import React from 'react';
-const SearchBar = ({clickSearch, keyPress}) => {
+const SearchBar = ({clickSearch}) => {
+  console.log(clickSearch)
   return (
-    <div>
-      <input placeholder={'Search...'} onKeyPress={(e) => {keyPress(e)}} className="search" name="search" type="search"  />
-      <button onClick={(e) => {clickSearch(e)} } id="search-btn" type="text">Go!</button>
-    </div>
+      <>
+      <input placeholder={'Search...'} className="search" name="search" type="search"/>
+      <button onClick={(e) => {clickSearch.handleSearch(e)} } id="search-btn" type="text">Go!</button>
+      </>
   )
 }
 
