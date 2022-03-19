@@ -1,42 +1,63 @@
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs'
+import { API_KEY, MOVIE_DB_KEY } from '../config/config.js';
 import React from 'react';
 import movies from '/client/src/data/movies';
 import MovieList from './MovieList.jsx';
 import SearchBar from './SearchBar.jsx';
 import AddMovieBar from './AddMovieBar.jsx';
 
+const formatData = function(data) {
+  return data.results.map((movie) => {
+    let theMovie = {
+        title: movie.title,
+        year: movie.release_date,
+        imdbRating: movie.vote_average,
+        watched: false,
+        image: `https://image.tmdb.org/t/p/w200/${movie.poster_path}`,
+        display: false
+      }
+      return theMovie;
+    }
+  )
+}
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      movieStorage: this.props.movies,
+      movies: [],
       movieView: 'all',
       searchQuery: null
     };
-
-    this.handleAddMovie = this.handleAddMovie.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleToWatchClick = this.handleToWatchClick.bind(this);
-    this.handleWatchedClick = this.handleWatchedClick.bind(this);
-  };
+  }
 
   handleSearch(e) {
     let userInput = document.getElementsByClassName('search')[0].value;
 
     this.setState({
-      movieStorage: this.props.movies,
+      movies: this.state.movies,
       movieView: 'search',
       searchQuery: userInput
     });
   }
 
+  handleTitleClick(e) {
+    e.persist()
+    let movieTitle = e.target.innerText;
+    let movieList = this.state.movies;
+
+    for (let i = 0; i < movieList.length; i++) {
+      movieList[i].title === movieTitle ? movieList[i].display = !movieList[i].display : undefined;
+    }
+
+    this.setState({movies: movieList});
+  }
+
   handleAddMovie(movieName) {
-    console.log(this.props)
     if (this.props.movies[0].title === 'No movies to show at this time') {
       this.props.movies.push({title: movieName, watched: false});
       this.props.movies.shift()
-      this.setState( {movieStorage: this.props.movies, movieView: 'all'} );
+      this.setState( {movies: this.state.movies, movieView: 'all'} );
     } else {
       let movieExists = false;
       for (let movie of this.props.movies) {
@@ -46,16 +67,39 @@ class App extends React.Component {
       if (!movieExists) {
         this.props.movies.push({title: movieName, watched: false})
       }
-      this.setState({ movieStorage: this.props.movies, movieView: 'all' })
+      this.setState({ movies: this.state.movies, movieView: 'all' })
     }
   }
 
+  handleWatchToggle(e) {
+    let movieEntry = e.nativeEvent.path[3].innerText;
+    let slashIndex = movieEntry.indexOf(`\n`);
+    let movieName = movieEntry.slice(0, slashIndex);
+    let movieList = this.state.movies;
+
+    for (let i = 0; i < movieList.length; i++) {
+      if (movieList[i].title === movieName) {
+        movieList[i].watched = !movieList[i].watched;
+        break;
+      }
+    }
+
+    this.setState({movies: movieList});
+  }
+
   handleWatchedClick() {
-    this.setState({ movieStorage: this.props.movies, movieView: 'watch'});
+    this.setState({ movieView: 'watch'});
   }
 
   handleToWatchClick() {
-    this.setState({ movieStorage: this.props.movies, movieView: 'toWatch'});
+    this.setState({ movieView: 'toWatch'});
+  }
+
+  componentDidMount() {
+    fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${MOVIE_DB_KEY}`)
+      .then((response) => response.json())
+      .then((data) => formatData(data))
+      .then((movies) => this.setState({movies: movies}))
   }
 
   render() {
@@ -63,63 +107,17 @@ class App extends React.Component {
     <div>
      <h1 className="main-title">Movie List</h1>
        <div>
-         <AddMovieBar app={this}/>
+         <AddMovieBar handleAddMovie={this.handleAddMovie.bind(this)}/>
        </div>
        <div>
-         <button onClick={this.handleWatchedClick} className="watched-list" type="button">Watched</button>
-         <button onClick={this.handleToWatchClick} className="to-watch-list" type="button">To Watch</button>
-         <SearchBar clickSearch={this}/>
-       </div>
-        <MovieList input={this}/>
-     </div>
+         <button onClick={this.handleWatchedClick.bind(this)} className="watched-list" type="button">Watched</button>
+         <button onClick={this.handleToWatchClick.bind(this)} className="to-watch-list" type="button">To Watch</button>
+         <SearchBar handleSearch={this.handleSearch.bind(this)}/>
+       </div>{
+         (this.state.movies.length !== 0) ? <MovieList movies={this.state.movies} movieView={this.state.movieView} searchQuery={this.state.searchQuery} handleWatchToggle={this.handleWatchToggle.bind(this)} handleTitleClick={this.handleTitleClick.bind(this)}/> : null
+       }</div>
     )
   }
-
-  //***save point***
-
-  // render() {
-  //   return (
-  //   <div>
-  //    <h1 className="main-title">Movie List</h1>
-  //      <div>
-  //        <AddMovieBar app={this}/>
-  //      </div>
-  //      <div>
-  //        <button onClick={this.handleToWatchClick} className="watched-list" type="button">Watched</button>
-  //        <button onClick={this.handleWatchedClick} className="to-watch-list" type="button">To Watch</button>
-  //        <SearchBar clickSearch={this}/>
-  //      </div>
-  //       <MovieList movieList={this.state.movieStorage} movieView={this.state.movieView} searchQuery={this.state.searchQuery} mainProps={this.props.props}/>
-  //    </div>
-  //   )
-  // }
-
-  // render() {
-  //   return (
-  //   <div>
-  //    <h1 className="main-title">Movie List</h1>
-  //      <div>
-  //        <AddMovieBar app={this}/>
-  //      </div>
-  //        <SearchBar clickSearch={this}/>
-  //      <Tabs>
-  //        <TabList>
-  //           <Tab onClick={this.handleToWatchClick} className="watched-list" type="button">Watched</Tab>
-  //           <Tab onClick={this.handleWatchedClick} className="to-watch-list" type="button">To Watch</Tab>
-  //        </TabList>
-  //        <TabPanel>
-  //          <div>
-  //          <MovieList movieList={this.state.movieStorage} movieView={this.state.movieView} searchQuery={this.state.searchQuery} mainProps={this.props.props}/>
-  //          </div>
-  //        </TabPanel>
-  //        <TabPanel>
-  //           <MovieList movieList={this.state.movieStorage} movieView={this.state.movieView} searchQuery={this.state.searchQuery} mainProps={this.props.props}/>
-  //        </TabPanel>
-  //     </Tabs>
-
-  //     </div>
-  //   )
-  // }
 };
 
 

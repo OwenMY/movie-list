@@ -25,11 +25,18 @@ body {
 .movie-entry {
   padding: 30px;
   border: 1px solid;
-  width: 30%
+  width: 40%;
 }
 
 .movie-title {
-  text-align: center;
+  text-align: left;
+  color: white;
+  cursor: pointer;
+}
+
+.movie-info {
+  float: left;
+  margin-right: 75px;
 }
 
 .react-tabs__tab-list {
@@ -51,6 +58,10 @@ body {
   /* width: 25%; */
   padding-left: 5px;
   padding-right: 10px;
+}
+
+.watch-button {
+  cursor: pointer;
 }
 
 ul {

@@ -1,0 +1,4 @@
+const API_KEY = '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';
+const MOVIE_DB_KEY ='4ea90151e9717c69a29540c9a0708204';
+
+export { API_KEY, MOVIE_DB_KEY };
